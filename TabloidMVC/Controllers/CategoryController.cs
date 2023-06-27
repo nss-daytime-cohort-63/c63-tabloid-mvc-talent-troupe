@@ -13,47 +13,42 @@ namespace TabloidMVC.Controllers
         {
             _categoryRepo = categoryRepository;
         }
-        // GET: HomeController1
+        // GET: CategoryController
         public ActionResult Index()
         {
             List<Category> categories = _categoryRepo.GetAll();
             return View(categories);
         }
 
-        // GET: HomeController1/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: HomeController1/Create
+        // GET: CategoryController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: HomeController1/Create
+        // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Category category)
         {
             try
-            {
-                return RedirectToAction(nameof(Index));
+            {                
+                _categoryRepo.CreateCategory(category);
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View(category);
             }
         }
 
-        // GET: HomeController1/Edit/5
+        // GET: CategoryController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: HomeController1/Edit/5
+        // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -68,13 +63,13 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        // GET: HomeController1/Delete/5
+        // GET: CategoryController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: HomeController1/Delete/5
+        // POST: CategoryController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
