@@ -11,4 +11,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Views\UserProfile\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\UserProfile\" />
+  </ItemGroup>
 </Project>
