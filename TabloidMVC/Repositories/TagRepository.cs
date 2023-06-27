@@ -50,6 +50,34 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public Tag GetTagById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT * FROM Tag WHERE Tag.Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            Tag tag = new Tag()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                            };
+
+                            return tag;
+                        }
+                        else { return null; }
+                    }
+                }
+            }
+        }
+
         public void AddTag(Tag tag)
         {
             using (SqlConnection conn = Connection)
@@ -63,6 +91,22 @@ namespace TabloidMVC.Repositories
                     int newlyCreatedId = (int)cmd.ExecuteScalar();
 
                     tag.Id = newlyCreatedId;
+                }
+            }
+        }
+
+        public void DeleteTag(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Tag Where Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
