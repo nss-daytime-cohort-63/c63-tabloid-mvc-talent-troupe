@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
+using Microsoft.Data.SqlClient;
 
 namespace TabloidMVC.Repositories
 {
@@ -9,12 +10,12 @@ namespace TabloidMVC.Repositories
         public CategoryRepository(IConfiguration config) : base(config) { }
         public List<Category> GetAll()
         {
-            using (var conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT id, name FROM Category";
+                    cmd.CommandText = "SELECT Id, Name FROM Category";
                     var reader = cmd.ExecuteReader();
 
                     var categories = new List<Category>();
@@ -24,7 +25,7 @@ namespace TabloidMVC.Repositories
                         categories.Add(new Category()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
                         });
                     }
 
