@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
 using Microsoft.Data.SqlClient;
+using System.Xml;
 
 namespace TabloidMVC.Repositories
 {
@@ -48,6 +49,45 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@name", category.Name);
                     int id = (int)cmd.ExecuteScalar();
                     category.Id = id;                  
+                }
+            }
+        }
+        public void EditCategory(Category category)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Category
+                                        SET [Name] = @name
+                                        WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.Parameters.AddWithValue("@id", category.Id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public Category GetCategoryById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Name FROM Category
+                                        WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        Category category = new Category();
+                        if (reader.Read())
+                        {
+                            category.Name = reader.GetString(reader.GetOrdinal("Name"));
+                            category.Id = id;
+                        };
+                        return category;
+                    }
                 }
             }
         }
