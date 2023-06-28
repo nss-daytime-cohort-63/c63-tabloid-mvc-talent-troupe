@@ -246,6 +246,25 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        public void EditPost(Post post)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "UPDATE Post Set Title = @title, Content = @content, CategoryId = @categoryId, ImageLocation = @image, PublishDateTime = @pubDate WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", post.Id);
+                    cmd.Parameters.AddWithValue("@title", post.Title);
+                    cmd.Parameters.AddWithValue("@content", post.Content);
+                    cmd.Parameters.AddWithValue("@categoryId", post.CategoryId);
+                    cmd.Parameters.AddWithValue("@image", post.ImageLocation);
+                    cmd.Parameters.AddWithValue("@pubDate", post.PublishDateTime);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         private Post NewPostFromReader(SqlDataReader reader)
         {
             return new Post()
