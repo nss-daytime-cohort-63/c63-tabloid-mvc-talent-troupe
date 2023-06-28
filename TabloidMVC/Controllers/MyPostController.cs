@@ -58,21 +58,25 @@ namespace TabloidMVC.Controllers
         // GET: MyPostController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            int currentUser = GetCurrentUserProfileId();
+            Post post = _postRepository.GetUserPostById(id, currentUser);
+            return View(post);
         }
 
         // POST: MyPostController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Post post)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _postRepository.EditPost(post);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(post);
             }
         }
 
