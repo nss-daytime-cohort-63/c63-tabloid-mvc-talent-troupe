@@ -72,6 +72,41 @@ namespace TabloidMVC.Controllers
                 return View(profile);
             }
         }
+
+        public ActionResult Activate(int id)
+        {
+            UserProfile profile = _userProfileRepository.GetByUserId(id);
+            if (profile.UserTypeId == 3 || profile.UserTypeId == 4)
+            {
+                return View(profile);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Activate(int id, UserProfile profile)
+        {
+            try
+            {
+                _userProfileRepository.ActivateProfile(profile);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(profile);
+            }
+        }
+
+        public ActionResult InactiveIndex()
+        {
+            List<UserProfile> inactiveUserProfiles = _userProfileRepository.GetDeactivatedUserProfiles();
+            return View(inactiveUserProfiles);
+        }
     }
 }
 
