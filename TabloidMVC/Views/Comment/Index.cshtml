@@ -4,27 +4,44 @@
     ViewData["Title"] = "Index";
 }
 
+<div class="container pt-5">
 <h2>Comments</h2>
 
 @if (Model != null && Model.Any())
 {
-    <ul>
-        @foreach (var comment in Model)
-        {
-            <li>
-                <h5>@comment.Subject</h5>
-                <p>@comment.Content</p>
-                <p>By: @comment.UserProfile.DisplayName</p>
-                <p>Created on: @comment.CreateDateTime.ToString("MM/dd/yyyy")</p>
-            </li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Content</th>
+                <th>Author</th>
+                <th>Created on</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                <tr>
+                    <td>@comment.Subject</td>
+                    <td>@comment.Content</td>
+                    <td>@comment.UserProfile.DisplayName</td>
+                    <td>@comment.CreateDateTime.ToString("MM/dd/yyyy")</td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="Comment" asp-route-id="@comment.Id" class="btn btn-outline-primary mx-1" title="Edit"><i class="fas fa-pencil-alt"></i></a>
+                        <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id" class="btn btn-outline-primary mx-1" title="Delete"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 else
 {
     <p>No comments.</p>
 }
 
+
 <!-- Back to Post menu option -->
 <a asp-action="Details" asp-controller="Post" asp-route-id="@ViewBag.PostId">Back to Post</a>
-
+</div>
