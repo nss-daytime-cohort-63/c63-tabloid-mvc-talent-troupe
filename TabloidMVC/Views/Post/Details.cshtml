@@ -36,5 +36,37 @@
         <section class="row post__content">
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Content)</p>
         </section>
+
+
+        <!-- Comments -->
+        <h3>Comments</h3>
+        @if (Model.Comments != null)
+        {
+            <ul>
+                @foreach (var comment in Model.Comments)
+                {
+                    <li>
+                        <h5>@comment.Subject</h5>
+                        <p>@comment.Content</p>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No comments.</p>
+        }
+
+        <!-- Add Comment menu option -->
+        <a asp-action="Create" asp-controller="Comment" asp-route-postId="@Model.Id">Add Comment</a>
+
+        @{
+            var commentViewModel = new TabloidMVC.Models.ViewModels.CommentCreateViewModel();
+            commentViewModel.PostId = Model.Id;
+        }
     </div>
 </div>
+        
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
