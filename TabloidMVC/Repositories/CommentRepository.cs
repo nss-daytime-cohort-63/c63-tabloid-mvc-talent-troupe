@@ -38,9 +38,11 @@ public class CommentRepository : BaseRepository, ICommentRepository
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = @"
-            SELECT Id, PostId, Subject, Content, CreateDateTime, UserProfileId
-              FROM Comment
-             WHERE PostId = @PostId";
+                SELECT c.Id, c.PostId, c.Subject, c.Content, c.CreateDateTime, c.UserProfileId,
+                       u.DisplayName
+                  FROM Comment c
+                       LEFT JOIN UserProfile u ON c.UserProfileId = u.Id
+                 WHERE PostId = @PostId";
                 cmd.Parameters.AddWithValue("@PostId", postId);
 
                 var reader = cmd.ExecuteReader();
@@ -56,7 +58,11 @@ public class CommentRepository : BaseRepository, ICommentRepository
                         Subject = reader.GetString(reader.GetOrdinal("Subject")),
                         Content = reader.GetString(reader.GetOrdinal("Content")),
                         CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
-                        UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId"))
+                        UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+                        UserProfile = new UserProfile()
+                        {
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName"))
+                        }
                     });
                 }
 

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<TabloidMVC.Models.Comment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Comments</h2>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var comment in Model)
+        {
+            <li>
+                <h5>@comment.Subject</h5>
+                <p>@comment.Content</p>
+                <p>By: @comment.UserProfile.DisplayName</p>
+                <p>Created on: @comment.CreateDateTime.ToString("MM/dd/yyyy")</p>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No comments.</p>
+}
+
+<!-- Back to Post menu option -->
+<a asp-action="Details" asp-controller="Post" asp-route-id="@ViewBag.PostId">Back to Post</a>
+
