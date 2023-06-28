@@ -34,6 +34,12 @@ namespace TabloidMVC.Controllers
                 return View();
             }
 
+            if (userProfile.UserTypeId == 3|| userProfile.UserTypeId == 4)
+            {
+                ModelState.AddModelError("Email", "Invalid email");
+                return View();
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
