@@ -36,10 +36,16 @@
                     @Html.DisplayFor(modelItem => item.UserType.Name)
                 </td>
                 <td>
-                    @Html.ActionLink("Deactivate", "Deactivate", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                </td>
-            </tr>
-        }
+                    @if (item.UserTypeId != 3 && item.UserTypeId != 4)
+                     {
+
+                            @Html.ActionLink("Deactivate |", "Deactivate", new { id = item.Id });
+                        
+                     }
+                     @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                
+                 </td>
+                    </tr>
+         }
     </tbody>
 </table>
