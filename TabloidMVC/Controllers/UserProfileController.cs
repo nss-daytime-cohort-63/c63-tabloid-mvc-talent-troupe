@@ -101,6 +101,12 @@ namespace TabloidMVC.Controllers
                 return View(profile);
             }
         }
+
+        public ActionResult InactiveIndex()
+        {
+            List<UserProfile> inactiveUserProfiles = _userProfileRepository.GetDeactivatedUserProfiles();
+            return View(inactiveUserProfiles);
+        }
     }
 }
 

@@ -205,5 +205,51 @@ namespace TabloidMVC.Repositories
 
             }
         }
+
+        public List<UserProfile> GetDeactivatedUserProfiles()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT UserProfile.Id as 'UserId', FirstName, LastName, DisplayName, Email, CreateDateTime, ImageLocation, UserTypeId, UserType.Name as 'UserTypeName'
+                     FROM UserProfile
+                     JOIN UserType
+                     on UserProfile.UserTypeId=UserType.Id
+                     WHERE UserTypeId = 3
+                     OR UserTypeId = 4
+                     ORDER BY DisplayName ASC";
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<UserProfile> userProfiles = new List<UserProfile>();
+
+                        while (reader.Read())
+                        {
+                            UserProfile userProfile = new UserProfile()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("UserId")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                                UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                UserType = new UserType
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                    Name = reader.GetString(reader.GetOrdinal("UserTypeName")),
+                                }
+                            };
+                            userProfiles.Add(userProfile);
+                        }
+
+                        return userProfiles;
+                    }
+                }
+
+            }
+        }
     }
 }
