@@ -1,15 +1,15 @@
 ﻿@model TabloidMVC.Models.UserProfile
 
 @{
-    ViewData["Title"] = "Deactivate";
+    ViewData["Title"] = "Activate";
 }
 
-<h1>Are you sure you want to deactivate this account?</h1>
+<h1>Are you sure you want to activate this account?</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Deactivate">
+        <form asp-action="Activate">
             <div class="form-group">
                 <input asp-for="Id" type="hidden" />
             </div>
@@ -17,7 +17,7 @@
                 <input asp-for="UserTypeId" type="hidden" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Yes, Deactivate Account" class="btn btn-primary" />
+                <input type="submit" value="Yes, Activate Account" class="btn btn-primary" />
             </div>
         </form>
     </div>

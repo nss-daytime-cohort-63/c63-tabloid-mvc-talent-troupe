@@ -37,14 +37,20 @@
                 </td>
                 <td>
                     @if (item.UserTypeId != 3 && item.UserTypeId != 4)
-                     {
+                    {
 
-                            @Html.ActionLink("Deactivate |", "Deactivate", new { id = item.Id });
-                        
-                     }
-                     @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                
-                 </td>
+                        @Html.ActionLink("Deactivate |", "Deactivate", new { id = item.Id });
+
+                    }
+                    @if (item.UserTypeId != 1 && item.UserTypeId != 2)
+                    {
+
+                        @Html.ActionLink("Activate |", "Activate", new { id = item.Id });
+
+                    }
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+
+                </td>
                     </tr>
          }
     </tbody>
