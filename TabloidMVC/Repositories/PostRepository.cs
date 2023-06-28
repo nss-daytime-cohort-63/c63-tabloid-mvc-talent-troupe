@@ -93,6 +93,37 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public List<Post> GetAllPostsByCurrentUser(int userProfileId)
+        {
+            using (SqlConnection conn  = Connection)
+            { 
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                SELECT * FROM Post p
+                JOIN UserProfile up ON p.UserProfileId = up.Id
+                JOIN Category c ON p.CategoryId = c.Id
+                WHERE up.Id =@id";
+
+
+                    cmd.Parameters.AddWithValue("@id", userProfileId);
+                    
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<Post> posts = new List<Post>();
+                        while (reader.Read())
+                        {
+                            Post post = new Post()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id"))
+                            };
+
+                        }
+                    }
+                }
+            }
+        }
         public Post GetUserPostById(int id, int userProfileId)
         {
             using (var conn = Connection)
