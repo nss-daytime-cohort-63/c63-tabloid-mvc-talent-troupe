@@ -36,6 +36,12 @@ namespace TabloidMVC.Controllers
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.Parse(id);
         }
+
+        public IActionResult Details(int id)
+        {
+            var user = _userProfileRepository.GetByUserId(id);
+            return View(user);
+        }
     }
 }
 

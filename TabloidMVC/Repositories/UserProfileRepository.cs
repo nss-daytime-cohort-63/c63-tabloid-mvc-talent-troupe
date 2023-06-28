@@ -85,7 +85,6 @@ namespace TabloidMVC.Repositories
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
-                            ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
                             UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
                             UserType = new UserType()
                             {
@@ -93,6 +92,11 @@ namespace TabloidMVC.Repositories
                                 Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
                             },
                         };
+
+                        if(!reader.IsDBNull(reader.GetOrdinal("ImageLocation")))
+                        {
+                            userProfile.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
+                        }
                     }
 
                     reader.Close();
