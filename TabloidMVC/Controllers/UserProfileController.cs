@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
 using System.Security.Claims;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -41,6 +42,35 @@ namespace TabloidMVC.Controllers
         {
             var user = _userProfileRepository.GetByUserId(id);
             return View(user);
+        }
+
+        public ActionResult Deactivate(int id)
+        {
+            UserProfile profile = _userProfileRepository.GetByUserId(id);
+            if (profile.UserTypeId == 1 || profile.UserTypeId == 2)
+            {
+                return View(profile);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Deactivate(int id, UserProfile profile)
+        {
+            try
+            {
+                    _userProfileRepository.DeactivateProfile(profile);
+                    return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(profile);
+            }
         }
     }
 }

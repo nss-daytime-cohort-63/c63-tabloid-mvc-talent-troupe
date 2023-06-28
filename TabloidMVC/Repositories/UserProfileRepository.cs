@@ -147,7 +147,34 @@ namespace TabloidMVC.Repositories
                     }
                 }
 
-            
+            }
+        }
+
+        public void DeactivateProfile(UserProfile profile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    if (profile.UserTypeId == 1)
+                    {
+                        cmd.CommandText = @"UPDATE UserProfile
+                                        SET UserTypeId = 3
+                                        WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@id", profile.Id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    else 
+                    {
+                        cmd.CommandText = @"UPDATE UserProfile
+                                        SET UserTypeId = 4
+                                        WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@id", profile.Id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                   
             }
         }
     }
