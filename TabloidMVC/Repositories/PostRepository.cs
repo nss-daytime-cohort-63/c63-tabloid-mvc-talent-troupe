@@ -93,6 +93,77 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public List<Post> GetAllPostsByCurrentUser(int userProfileId)
+        {
+            using (SqlConnection conn  = Connection)
+            { 
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                    SELECT p.id, p.Title, p.Content, p.ImageLocation as 'PostImageLoc', p.CreateDateTime as 'PostCreateTime', 
+                                    p.PublishDateTime as 'PostPublishTime', p.IsApproved, p.CategoryId, p.UserProfileId,
+                                    up.FirstName, up.LastName, up.DisplayName, up.Email, up.CreateDateTime as 'UserCreateTime', up.ImageLocation as 'UserImageLoc',
+                                    up.UserTypeId, up.UserTypeId, c.Name, ut.Name as 'UserTypeName'
+                                    FROM Post p
+                                    JOIN UserProfile up ON p.UserProfileId = up.Id
+                                    JOIN Category c ON p.CategoryId = c.Id
+                                    JOIN UserType ut ON up.UserTypeId = ut.Id
+                                    WHERE up.Id = @id
+                                    ORDER BY up.CreateDateTime ASC";
+
+
+                    cmd.Parameters.AddWithValue("@id", userProfileId);
+                    
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<Post> posts = new List<Post>();
+                        while (reader.Read())
+                        {
+                            Post post = new Post()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("Title")),
+                                Content = reader.GetString(reader.GetOrdinal("Content")),
+                                ImageLocation = reader.GetString(reader.GetOrdinal("PostImageLoc")),
+                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("PostCreateTime")),
+                                PublishDateTime = reader.GetDateTime(reader.GetOrdinal("PostPublishTime")),
+                                IsApproved = reader.GetBoolean(reader.GetOrdinal("IsApproved")),
+                                CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+                                Category = new Category()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name"))
+                                },
+                                UserProfile = new UserProfile()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                    DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                                    CreateDateTime = reader.GetDateTime(reader.GetOrdinal("UserCreateTime")),
+                                    UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                    UserType = new UserType()
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                        Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
+                                    }
+                                }
+                            };
+                            if (!reader.IsDBNull(reader.GetOrdinal("UserImageLoc")))
+                            {
+                                post.UserProfile.ImageLocation = reader.GetString(reader.GetOrdinal("UserImageLoc"));
+                            }
+
+                            posts.Add(post);
+                        }
+                        return posts;
+                    }
+                }
+            }
+        }
         public Post GetUserPostById(int id, int userProfileId)
         {
             using (var conn = Connection)

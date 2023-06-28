@@ -74,6 +74,21 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        public IActionResult GetAllPostsByUser(int id)
+        {
+            var post = _postRepository.GetPublishedPostById(id);
+            if (post == null)
+            {
+                int userId = GetCurrentUserProfileId();
+                post = _postRepository.GetUserPostById(id, userId);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+            }
+            return View(post);
+        }
+
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
