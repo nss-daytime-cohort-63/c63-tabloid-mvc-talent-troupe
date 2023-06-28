@@ -72,5 +72,58 @@ public class CommentRepository : BaseRepository, ICommentRepository
             }
         }
     }
+
+    public Comment GetCommentById(int id)
+    {
+        using (var conn = Connection)
+        {
+            conn.Open();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"
+                SELECT Id, PostId, Subject, Content, CreateDateTime, UserProfileId
+                  FROM Comment
+                 WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    var comment = new Comment()
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                        Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                        Content = reader.GetString(reader.GetOrdinal("Content")),
+                        CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                        UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId"))
+                    };
+
+                    reader.Close();
+                    return comment;
+                }
+                else
+                {
+                    reader.Close();
+                    return null;
+                }
+            }
+        }
+    }
+
+    public void DeleteComment(int id)
+    {
+        using (var conn = Connection)
+        {
+            conn.Open();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM Comment WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
 }
 

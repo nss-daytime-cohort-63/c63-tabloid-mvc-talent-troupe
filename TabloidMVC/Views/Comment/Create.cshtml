@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
+<div class="container pt-5">
 <h2>Add Comment</h2>
 
 @using (Html.BeginForm("Create", "Comment", FormMethod.Post))
@@ -38,3 +39,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+</div>
