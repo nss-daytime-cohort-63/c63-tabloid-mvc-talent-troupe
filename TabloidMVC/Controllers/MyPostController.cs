@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
+using System;
+
 namespace TabloidMVC.Controllers
 {
     public class MyPostController : Controller
@@ -77,21 +79,25 @@ namespace TabloidMVC.Controllers
         // GET: MyPostController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            int currentUser = GetCurrentUserProfileId();
+            Post post = _postRepository.GetUserPostById(id, currentUser);
+            return View(post);
         }
 
         // POST: MyPostController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Post post)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _postRepository.DeletePost(id);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(post);
             }
         }
 
