@@ -5,16 +5,21 @@ using TabloidMVC.Repositories;
 using TabloidMVC.Models;
 using System.Security.Claims;
 using System;
+using TabloidMVC.Models.ViewModels;
 
 namespace TabloidMVC.Controllers
 {
 	public class UserProfileController : Controller
 	{
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
 
-        public UserProfileController(IUserProfileRepository userProfileRepository)
+        public UserProfileController(
+            IUserProfileRepository userProfileRepository,
+            IUserTypeRepository userTypeRepository)
         {
             _userProfileRepository = userProfileRepository;
+            _userTypeRepository = userTypeRepository;
         }
 
         public ActionResult Index()
@@ -106,6 +111,43 @@ namespace TabloidMVC.Controllers
         {
             List<UserProfile> inactiveUserProfiles = _userProfileRepository.GetDeactivatedUserProfiles();
             return View(inactiveUserProfiles);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            UserProfile profile = _userProfileRepository.GetByUserId(id);
+
+            if (profile == null)
+            {
+                return NotFound();
+            }
+
+            List<UserType> userTypes = _userTypeRepository.GetAllTypes();
+
+            UserProfileEditViewModel vm = new UserProfileEditViewModel()
+            {
+                UserProfile = profile,
+                UserTypes = userTypes
+            };
+
+            return View(vm);
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, UserProfile UserProfile)
+        {
+            try
+            {
+                _userProfileRepository.UpdateProfile(UserProfile);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+
+                return RedirectToAction("Index");
+            }
         }
     }
 }
