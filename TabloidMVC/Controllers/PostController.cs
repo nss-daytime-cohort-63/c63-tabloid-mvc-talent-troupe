@@ -25,8 +25,16 @@ namespace TabloidMVC.Controllers
         public IActionResult Index()
         {
             var posts = _postRepository.GetAllPublishedPosts();
+
+            foreach (var post in posts)
+            {
+                post.WordCount = _postRepository.GetWordCount(post);
+                post.EstimatedReadingTime = _postRepository.GetEstimatedReadingTime(post);
+            }
+
             return View(posts);
         }
+
 
         public IActionResult Details(int id)
         {
