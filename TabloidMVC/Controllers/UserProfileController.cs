@@ -136,21 +136,15 @@ namespace TabloidMVC.Controllers
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, UserProfile profile)
+        public ActionResult Edit(int id, UserProfile UserProfile)
         {
             try
             {
-                _userProfileRepository.UpdateProfile(profile);
+                _userProfileRepository.UpdateProfile(UserProfile);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                List<UserType> userTypes = _userTypeRepository.GetAllTypes();
-                UserProfileEditViewModel vm = new UserProfileEditViewModel()
-                {
-                    UserProfile = profile,
-                    UserTypes = userTypes
-                };
 
                 return RedirectToAction("Index");
             }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Hosting;
+using System;
 
 namespace TabloidMVC.Repositories
 {
@@ -259,30 +261,36 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                        cmd.CommandText = @"UPDATE UserProfile
+                        cmd.CommandText = @"
+                                        UPDATE UserProfile
                                         SET
-                                         DisplayName = @displayName ,
+                                         DisplayName = @displayName,
                                          FirstName = @firstName,
                                          LastName = @lastName,
                                          Email = @email,
-                                         CreateDateTime = @createDateTime,
-                                         UserTypeId = @userTypeId,
-                                         WHERE Id = @id";
+                                         ImageLocation = @imageLoc,
+                                         UserTypeId = @userTypeId
+                                        WHERE Id = @id";
                         cmd.Parameters.AddWithValue("@displayName", profile.DisplayName);
                         cmd.Parameters.AddWithValue("@firstName", profile.FirstName);
                         cmd.Parameters.AddWithValue("@lastName", profile.LastName);
                         cmd.Parameters.AddWithValue("@email", profile.Email);
-                        cmd.Parameters.AddWithValue("@createDateTime", profile.CreateDateTime);
                         cmd.Parameters.AddWithValue("@userTypeId", profile.UserTypeId);
                         cmd.Parameters.AddWithValue("@id", profile.Id);
 
-                        cmd.ExecuteNonQuery();
+                    if(profile.ImageLocation == "" || profile.ImageLocation == null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageLoc", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageLoc", profile.ImageLocation);
+                    }
+
+
+                    cmd.ExecuteNonQuery();
                 }
-
             }
-
-
-
         }
     }
 }
