@@ -31,7 +31,11 @@ namespace TabloidMVC.Controllers
         // GET: CommentController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            // Retrieve the comment from the database using its id
+            var comment = _commentRepository.GetCommentById(id);
+
+            // Pass the comment to the Details view
+            return View(comment);
         }
 
         // GET: CommentController/Create
@@ -67,17 +71,38 @@ namespace TabloidMVC.Controllers
         // GET: CommentController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            // Retrieve the comment from the database using its id
+            var comment = _commentRepository.GetCommentById(id);
+
+            // Create a new CommentCreateViewModel object and populate its properties with the data from the comment
+            var viewModel = new CommentCreateViewModel();
+            viewModel.PostId = comment.PostId;
+            viewModel.Subject = comment.Subject;
+            viewModel.Content = comment.Content;
+
+            // Pass the viewModel to the Edit view
+            return View(viewModel);
         }
 
         // POST: CommentController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, CommentCreateViewModel viewModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                // Retrieve the comment from the database using its id
+                var comment = _commentRepository.GetCommentById(id);
+
+                // Update the comment properties with the new values from the viewModel object
+                comment.Subject = viewModel.Subject;
+                comment.Content = viewModel.Content;
+
+                // Save the changes to the database
+                _commentRepository.UpdateComment(comment);
+
+                // Redirect to the Details page for the updated comment
+                return RedirectToAction("Details", new { id = comment.Id });
             }
             catch
             {

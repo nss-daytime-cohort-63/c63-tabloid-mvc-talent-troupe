@@ -125,5 +125,26 @@ public class CommentRepository : BaseRepository, ICommentRepository
             }
         }
     }
+
+    public void UpdateComment(Comment comment)
+    {
+        using (var conn = Connection)
+        {
+            conn.Open();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"
+                UPDATE Comment
+                   SET Subject = @Subject,
+                       Content = @Content
+                 WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", comment.Id);
+                cmd.Parameters.AddWithValue("@Subject", comment.Subject);
+                cmd.Parameters.AddWithValue("@Content", comment.Content);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
 }
 
