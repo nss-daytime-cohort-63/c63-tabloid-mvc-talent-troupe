@@ -12,5 +12,8 @@ namespace TabloidMVC.Repositories
         List<Post> GetAllPostsByCurrentUser(int userId);
         void DeletePost(int id);
         void EditPost(Post post);
+
+        int GetWordCount(Post post);
+        int GetEstimatedReadingTime(Post post);
     }
 }

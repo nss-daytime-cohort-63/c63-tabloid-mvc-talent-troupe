@@ -300,5 +300,17 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
+
+        public int GetWordCount(Post post)
+        {
+            return post.Content.Split(new char[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        }
+
+        public int GetEstimatedReadingTime(Post post)
+        {
+            int wordCount = GetWordCount(post);
+            double readingTimeInMinutes = (double)wordCount / 265;
+            return (int)Math.Ceiling(readingTimeInMinutes);
+        }
     }
 }
