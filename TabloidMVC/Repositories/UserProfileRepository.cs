@@ -95,7 +95,7 @@ namespace TabloidMVC.Repositories
                             },
                         };
 
-                        if(!reader.IsDBNull(reader.GetOrdinal("ImageLocation")))
+                        if (!reader.IsDBNull(reader.GetOrdinal("ImageLocation")))
                         {
                             userProfile.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
                         }
@@ -167,7 +167,7 @@ namespace TabloidMVC.Repositories
                         cmd.Parameters.AddWithValue("@id", profile.Id);
                         cmd.ExecuteNonQuery();
                     }
-                    else 
+                    else
                     {
                         cmd.CommandText = @"UPDATE UserProfile
                                         SET UserTypeId = 4
@@ -176,7 +176,7 @@ namespace TabloidMVC.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
-                   
+
             }
         }
 
@@ -261,7 +261,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                        cmd.CommandText = @"
+                    cmd.CommandText = @"
                                         UPDATE UserProfile
                                         SET
                                          DisplayName = @displayName,
@@ -271,14 +271,14 @@ namespace TabloidMVC.Repositories
                                          ImageLocation = @imageLoc,
                                          UserTypeId = @userTypeId
                                         WHERE Id = @id";
-                        cmd.Parameters.AddWithValue("@displayName", profile.DisplayName);
-                        cmd.Parameters.AddWithValue("@firstName", profile.FirstName);
-                        cmd.Parameters.AddWithValue("@lastName", profile.LastName);
-                        cmd.Parameters.AddWithValue("@email", profile.Email);
-                        cmd.Parameters.AddWithValue("@userTypeId", profile.UserTypeId);
-                        cmd.Parameters.AddWithValue("@id", profile.Id);
+                    cmd.Parameters.AddWithValue("@displayName", profile.DisplayName);
+                    cmd.Parameters.AddWithValue("@firstName", profile.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", profile.LastName);
+                    cmd.Parameters.AddWithValue("@email", profile.Email);
+                    cmd.Parameters.AddWithValue("@userTypeId", profile.UserTypeId);
+                    cmd.Parameters.AddWithValue("@id", profile.Id);
 
-                    if(profile.ImageLocation == "" || profile.ImageLocation == null)
+                    if (profile.ImageLocation == "" || profile.ImageLocation == null)
                     {
                         cmd.Parameters.AddWithValue("@imageLoc", DBNull.Value);
                     }
@@ -289,6 +289,30 @@ namespace TabloidMVC.Repositories
 
 
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void AddUser(UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                        INSERT INTO UserProfile (FirstName, LastName, DisplayName, Email, CreateDateTime, ImageLocation, UserTypeId)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@firstName, @lastName, @displayName, @email, @createDateTime, @imageLocation, @userTypeId)";
+                    cmd.Parameters.AddWithValue("@firstName", userProfile.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", userProfile.LastName);
+                    cmd.Parameters.AddWithValue("@displayName", userProfile.DisplayName);
+                    cmd.Parameters.AddWithValue("@email", userProfile.Email);
+                    cmd.Parameters.AddWithValue("@createDateTime", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@userTypeId", 2);
+                    int id = (int)cmd.ExecuteScalar();
+                    userProfile.Id = id;
                 }
             }
         }
