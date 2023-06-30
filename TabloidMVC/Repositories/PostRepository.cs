@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
@@ -33,7 +34,7 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()
+                        WHERE PublishDateTime < SYSDATETIME()
                         ORDER BY p.PublishDateTime DESC";
                     var reader = cmd.ExecuteReader();
 
@@ -50,6 +51,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
         public Post GetPublishedPostById(int id)
         {
             using (var conn = Connection)
@@ -91,6 +93,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
         public List<Post> GetAllPostsByCurrentUser(int userProfileId)
         {
             using (SqlConnection conn  = Connection)
@@ -162,6 +165,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
         public Post GetUserPostById(int id, int userProfileId)
         {
             using (var conn = Connection)
@@ -202,6 +206,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
         public void Add(Post post)
         {
             using (var conn = Connection)
@@ -273,6 +278,7 @@ namespace TabloidMVC.Repositories
                 CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                 PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime"),
                 CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                IsApproved = reader.GetBoolean(reader.GetOrdinal("IsApproved")),
                 Category = new Category()
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
@@ -308,6 +314,23 @@ namespace TabloidMVC.Repositories
             int wordCount = GetWordCount(post);
             double readingTimeInMinutes = (double)wordCount / 265;
             return (int)Math.Ceiling(readingTimeInMinutes);
+        }
+
+        public void ToggleApproval(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                UPDATE Post 
+                SET IsApproved = CASE WHEN IsApproved = 1 THEN 0 ELSE 1 END 
+                WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

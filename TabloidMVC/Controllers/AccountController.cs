@@ -82,6 +82,5 @@ namespace TabloidMVC.Controllers
                 return View(userProfile);
             }
         }
-
     }
 }

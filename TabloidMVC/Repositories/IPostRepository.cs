@@ -15,5 +15,7 @@ namespace TabloidMVC.Repositories
 
         int GetWordCount(Post post);
         int GetEstimatedReadingTime(Post post);
+
+        void ToggleApproval(int id);
     }
 }
