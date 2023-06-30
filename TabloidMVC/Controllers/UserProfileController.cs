@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
@@ -9,7 +8,7 @@ using TabloidMVC.Models.ViewModels;
 
 namespace TabloidMVC.Controllers
 {
-	public class UserProfileController : Controller
+    public class UserProfileController : Controller
 	{
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IUserTypeRepository _userTypeRepository;
