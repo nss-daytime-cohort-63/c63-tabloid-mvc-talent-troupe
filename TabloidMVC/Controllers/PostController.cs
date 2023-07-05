@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
+using System.Linq;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -28,6 +29,12 @@ namespace TabloidMVC.Controllers
         public IActionResult Index()
         {
             var posts = _postRepository.GetAllPublishedPosts();
+
+            // If the user is not an admin, filter the posts to only include approved posts
+            if (!User.IsInRole("1"))
+            {
+                posts = posts.Where(post => post.IsApproved).ToList();
+            }
 
             foreach (var post in posts)
             {
@@ -106,6 +113,7 @@ namespace TabloidMVC.Controllers
             return int.Parse(id);
         }
 
+        [Authorize(Roles = "1")]
         [HttpPost]
         public IActionResult ToggleApproval(int id)
         {

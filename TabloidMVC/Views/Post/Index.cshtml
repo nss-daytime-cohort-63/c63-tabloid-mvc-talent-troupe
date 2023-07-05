@@ -30,9 +30,12 @@
                     @Html.DisplayNameFor(model => model.EstimatedReadingTime)
                 </th>
                 <!-- Add a new column for the IsApproved property -->
-                <th>
-                    @Html.DisplayNameFor(model => model.IsApproved)
-                </th>
+                @if (User.IsInRole("1"))
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsApproved)
+                    </th>
+                }
                 <th></th>
             </tr>
         </thead>
@@ -65,10 +68,13 @@
 
                     <!-- Display a clickable checkmark to approve the post -->
                     <td>
-                        @using (Html.BeginForm("ToggleApproval", "Post", new { id = item.Id }))
+                        @if (User.IsInRole("1"))
                         {
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <input type="checkbox" @(Convert.ToBoolean(item.IsApproved) ? "checked='checked'" : string.Empty) onchange="this.form.submit()" />
+                            @using (Html.BeginForm("ToggleApproval", "Post", new { id = item.Id }))
+                            {
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="checkbox" @(Convert.ToBoolean(item.IsApproved) ? "checked='checked'" : string.Empty) onchange="this.form.submit()" />
+                            }
                         }
                     </td>
 
